@@ -1,43 +1,67 @@
 <html>
 <head>
-	<title>
-		My First Blog
-	</title>
-	{% block headCss %}
-		<link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/base.css')}}" type="text/css">
-	{% endblock %}
+ <title>
+  My First Blog
+ </title>
+ {% block headCss %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/base.css')}}" type="text/css">
+ {% endblock %}
 </head>
-	<body class="body">
-		<h2>Welcome to your blog</h2>
-		<form class="form-border" action="/add_post" method="POST">
-			<div class="title wrapper">
-				<input id="input-title" type="text" name="title" placeholder="Title"></input>
-			</div>
+ <body class="body">
+  <h2>Welcome to your blog</h2>
+  <form id="form" class="form-border" action="/add_post" method="POST">
+  <input id="input-id" type="hidden" name="id"></input>
 
-			<div class="title wrapper">
-				<textarea id="input-post" name="post"></textarea>
-			</div>
-			<div  class="description wrapper">
-				<input type="submit" id="input-submit" value="POST"></input>
-			</div>
-		</form>
+   <div class="title wrapper">
+    <input id="input-title" type="text" name="title" placeholder="Title"></input>
+   </div>
 
-		{% for post in posts %}
-			<div class="blog-border">
-				<div class="title">
-					<div> {{ post.title }} </div>
-				</div>
-				<div class="post">
-					<div> {{ post.post }} </div>
-				</div>
-		  	</div>
-		{% endfor %}
-	
-	</body>
+   <div class="title wrapper">
+    <textarea id="input-post" name="post"></textarea>
+   </div>
+   <div  class="description wrapper">
+    <input type="submit" id="input-submit" value="POST"></input>
+   </div>
+  </form>
+
+  {% for post in posts %}
+   <div class="blog-border">
+    <div class="title">
+     <div> {{ post.title }} </div>
+    </div>
+    <div class="post">
+     <div> {{ post.post }} </div>
+    </div>
+     </div>
+     <button id="btn-update" data-id="{{ post._id }}" data-title="{{ post.title }}" data-post="{{ post.post }}" onclick="update(this)">Update</button>
+         <button id="btn-delete" data-id="{{ post._id }}" onclick="deletePost(this)">Delete</button>
+  {% endfor %}
+ 
+ </body>
 
 </html>
 
+<script>
+  function update(param) {
+      var post_id = param.getAttribute("data-id");
+      var post_title = param.getAttribute("data-title");
+      var post_post = param.getAttribute("data-post");
 
+      document.getElementById("input-id").value = post_id;
+      document.getElementById("input-title").value = post_title;
+      document.getElementById("input-post").value = post_post;
+      document.getElementById("form").setAttribute("action", "/update_post");
+  }
 
+  function deletePost(param) {
+      var post_id = param.getAttribute('data-id');
 
-
+      fetch('/delete-post/' + post_id, {
+        method: 'delete'
+      }).then(function(response) {
+        window.location.reload();
+      }).catch(function(err) {
+        console.log("Error" + err)
+      });
+  }
+</script>

@@ -33,6 +33,18 @@ def add_post():
     new()
     return redirect(url_for('landing_page'))
 
+@app.route('/update_post', methods=['POST'])
+def update_post():
+
+    update()
+    return redirect(url_for('landing_page'))
+
+@app.route('/delete-post/<post_id>', methods=['DELETE'])
+def delete_post(post_id):
+
+    delete_port_service(post_id)
+
+    return {'message':"Successfully deleted."}, 200, {'Content-Type': 'application/json; charset=utf-8'}
 
 @app.route('/remove_all')
 def remove_all():
@@ -67,6 +79,22 @@ def new():
 
     return JSONEncoder().encode(posts[-1])
 
+@app.route('/update', methods=['POST'])
+def update():
+
+    item = {'_id': ObjectId(request.form['id'])}
+    item_doc = {
+        'title': request.form['title'],
+        'post': request.form['post']
+    }
+    db.blogpostDB.update(item, item_doc)
+
+def delete_port_service(post_id):
+
+    db.blogpostDB.remove({'_id':ObjectId(post_id)})
+
+    _posts = db.blogpostDB.find({'_id':ObjectId(post_id)})
+    return _posts
 
 ### Insert function here ###
 
