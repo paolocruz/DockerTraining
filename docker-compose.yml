@@ -3,13 +3,15 @@ services:
   backend:
     image: mongo:latest
     ports:
-      - "27017:27017"
+      - "27017:27012"
     networks:
         - docker_cont_network
   swagger:
     image: swaggerapi/swagger-ui
     ports:
       - "80:8080"
+    volumes:
+      - ./swagger:/app
     environment:
       - API_URL=http://localhost:8082/swagger.json
     networks:
@@ -24,7 +26,7 @@ services:
       build: .
       command: python -u app.py
       ports:
-        - "5000:5000"
+        - "5001:5000"
       volumes:
         - .:/app
       links:
